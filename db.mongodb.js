@@ -4,6 +4,7 @@ db.createCollection("users");
 db.createCollection("courses");
 db.createCollection("enrollments");
 db.createCollection("grades");
+db.createCollection("feedbacks");
 
 db.users.insertMany([
   {
@@ -124,5 +125,32 @@ db.grades.insertMany([
       { courseId: ObjectId("664c706adfd0327d485e256a"), grade: 6.5 },
       { courseId: ObjectId("664c706adfd0327d485e256b"), grade: 8.0 },
     ],
+  },
+]);
+
+db.feedbacks.insertMany([
+  {
+    _id: ObjectId("664c706adfd0327d485e2567"),
+    userId: ObjectId("664c706adfd0327d485e2567"),
+    courseId: ObjectId("664c706adfd0327d485e256a"),
+    rating: 5,
+    comment: "Great course!",
+    createdAt: new Date(),
+  },
+  {
+    _id: ObjectId("664c706adfd0327d485e2568"),
+    userId: ObjectId("664c706adfd0327d485e2567"),
+    courseId: ObjectId("664c706adfd0327d485e256a"),
+    rating: 4,
+    comment: "Very informative.",
+    createdAt: new Date(),
+  },
+  {
+    _id: ObjectId("664c706adfd0327d485e2569"),
+    userId: ObjectId("664c706adfd0327d485e2567"),
+    courseId: ObjectId("664c706adfd0327d485e256c"),
+    rating: 3,
+    comment: "Good but could be better.",
+    createdAt: new Date(),
   },
 ]);
