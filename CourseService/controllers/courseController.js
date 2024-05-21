@@ -30,6 +30,7 @@ const addCourse = async (req, res) => {
 //   }
 // };
 
+//redis
 const getAllCourses = async (req, res) => {
   try {
     const cachedCourse = await redisClient.get("courses");
