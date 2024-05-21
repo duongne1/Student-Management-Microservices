@@ -10,35 +10,40 @@ const middleware = require("./middleware/middlewareController");
 app.use(cookieParser());
 
 // Sử dụng createProxyMiddleware với retryMiddleware cho các dịch vụ
+
+//course service
 app.use(
   "/service1",
   middleware.verifyToken,
   createProxyMiddleware({ target: "http://localhost:3001", changeOrigin: true })
 );
 
+//enrollment service
 app.use(
-  "/",
-
-  createProxyMiddleware({ target: "http://localhost:3002", changeOrigin: true })
+  "/service3",
+  middleware.verifyToken,
+  createProxyMiddleware({ target: "http://localhost:3003", changeOrigin: true })
+);
+// //grade service
+app.use(
+  "/service4",
+  middleware.verifyToken,
+  createProxyMiddleware({ target: "http://localhost:3004", changeOrigin: true })
 );
 
-// Các dịch vụ khác có thể được thêm vào tương tự
-// app.use(
-//   "/service3",
-//   middleware.verifyToken,
-//   createProxyMiddleware({ target: "http://localhost:3003", changeOrigin: true })
-// );
-// app.use(
-//   "/service4",
-//   middleware.verifyToken,
-//   createProxyMiddleware({ target: "http://localhost:3004", changeOrigin: true })
-// );
-// app.use(
-//   "/service5",
-//   middleware.verifyToken,
-//   createProxyMiddleware({ target: "http://localhost:3005", changeOrigin: true })
-// );
+//feedback service
+app.use(
+  "/service5",
+  middleware.verifyToken,
+  createProxyMiddleware({ target: "http://localhost:3005", changeOrigin: true })
+);
 
-app.listen(3000, () => {
-  console.log("Server is running on PORT: " + 3000);
+//user service
+app.use(
+  "/",
+  createProxyMiddleware({ target: "http://localhost:3002", changeOrigin: true })
+);
+app.listen(port, () => {
+  console.log("API GateWay ");
+  console.log("Server is running on PORT: " + port);
 });

@@ -7,7 +7,7 @@ const userController = require("../controllers/userController");
 // http://localhost:3002/api/v1/users/login
 router.post("/login", userController.login);
 // http://localhost:3002/api/v1/users/sinup
-router.post("/sinup", userController.signup);
+router.post("/signup", userController.signup);
 
 // http://localhost:3002/api/v1/users/getAllUser
 router.get(
