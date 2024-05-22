@@ -1,24 +1,52 @@
 const Enrollment = require("../models/enrollment"); // Adjust the path as necessary
 const Course = require("../models/course");
 const addEnrollment = async (req, res) => {
-  const { userId, courseDetails } = req.body;
+  const { userId, courseId } = req.body;
 
-  // Basic validation
-  if (!userId || !courseDetails || !Array.isArray(courseDetails)) {
+  // Basic validation with detailed error messages
+  if (!userId) {
     return res.status(400).json({
-      error: "User ID and Course Details (as an array) are required",
+      error: "User ID is required",
+    });
+  }
+
+  if (!courseId) {
+    return res.status(400).json({
+      error: "Course ID is required",
     });
   }
 
   try {
-    const enrollment = new Enrollment({
-      userId,
-      courseDetails: courseDetails.map((detail) => ({
-        courseId: detail.courseId,
-        date: detail.date || Date.now(),
-      })),
-    });
-    await enrollment.save();
+    // Find enrollment for the student
+    let enrollment = await Enrollment.findOne({ userId });
+
+    if (!enrollment) {
+      // Create new enrollment if it doesn't exist
+      enrollment = new Enrollment({
+        userId,
+        courseDetails: [{ courseId, date: Date.now() }],
+      });
+      await enrollment.save();
+    } else {
+      // Check if the course already exists in courseDetails
+      const courseExistsInEnrollment = enrollment.courseDetails.some(
+        (course) => course.courseId.toString() === courseId
+      );
+
+      if (courseExistsInEnrollment) {
+        return res.status(400).json({ error: "Course already enrolled" });
+      }
+
+      // Add course to courseDetails if it doesn't exist
+      enrollment.courseDetails.push({ courseId, date: Date.now() });
+      await enrollment.save();
+    }
+
+    // Populate userId and courseId fields for better response
+    enrollment = await Enrollment.findOne({ userId })
+      .populate("userId")
+      .populate("courseDetails.courseId");
+
     res.status(201).json(enrollment);
   } catch (error) {
     console.error(error);
