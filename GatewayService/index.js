@@ -28,37 +28,50 @@ const limiter = rateLimit({
 
 app.use("/api/v1/users", limiter);
 
+USER_URL = "http://localhost:3002";
+COURSE_URL = "http://localhost:3001";
+ENROLLMENT_URL = "http://localhost:3003";
+GRADE_URL = "http://localhost:3004";
+FEEDBACK_URL = "http://localhost:3005";
+
+//courses service
 app.use(
   "/service1",
   middleware.verifyToken,
-  createProxyMiddleware({ target: "http://localhost:3001", changeOrigin: true })
+  createProxyMiddleware({ target: process.env.COURSE_URL, changeOrigin: true })
 );
 
 //enrollment service
 app.use(
   "/service3",
   middleware.verifyToken,
-  createProxyMiddleware({ target: "http://localhost:3003", changeOrigin: true })
+  createProxyMiddleware({
+    target: process.env.ENROLLMENT_URL,
+    changeOrigin: true,
+  })
 );
 // //grade service
 app.use(
   "/service4",
   middleware.verifyToken,
-  createProxyMiddleware({ target: "http://localhost:3004", changeOrigin: true })
+  createProxyMiddleware({ target: process.env.GRADE_URL, changeOrigin: true })
 );
 
 //feedback service
 app.use(
   "/service5",
-  // middleware.verifyToken,
-  createProxyMiddleware({ target: "http://localhost:3002", changeOrigin: true })
+  middleware.verifyToken,
+  createProxyMiddleware({
+    target: process.env.FEEDBACK_URL,
+    changeOrigin: true,
+  })
 );
 
 //user service
 
 app.use(
   "/",
-  createProxyMiddleware({ target: "http://localhost:3002", changeOrigin: true })
+  createProxyMiddleware({ target: process.env.USER_URL, changeOrigin: true })
 );
 app.use("/", limiter);
 app.listen(port, () => {

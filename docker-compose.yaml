@@ -1,0 +1,99 @@
+version: "3"
+
+services:
+  mongodb:
+    image: mongodb/mongodb-enterprise-server:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+
+  # course-service:
+  #   build:
+  #     context: ./CourseService
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     MONGODB_URI: "mongodb+srv://tung:1234@cluster0.6o97ncy.mongodb.net/studentManagement?retryWrites=true&w=majority&appName=Cluster0"
+  #     IP: course-service
+  #     PORT: "3001"
+  #     REDIS_HOST: "127.0.0.1"
+  #   depends_on:
+  #     - mongodb
+  #   ports:
+  #     - "3001:3001"
+
+  user-service:
+    build:
+      context: ./UserService
+      dockerfile: Dockerfile
+    environment:
+      MONGODB_URI: "mongodb+srv://tung:1234@cluster0.6o97ncy.mongodb.net/studentManagement?retryWrites=true&w=majority&appName=Cluster0"
+      IP: user-service
+      PORT: "3002"
+      JWT_ACCESS_KEY: "tung1234"
+    depends_on:
+      - mongodb
+    ports:
+      - "3002:3002"
+  enrollment-service:
+    build:
+      context: ./EnrollmentServices
+      dockerfile: Dockerfile
+    environment:
+      MONGODB_URI: "mongodb+srv://tung:1234@cluster0.6o97ncy.mongodb.net/studentManagement?retryWrites=true&w=majority&appName=Cluster0"
+      IP: enrollment-service
+      PORT: "3003"
+    depends_on:
+      - mongodb
+    ports:
+      - "3003:3003"
+
+  grade-service:
+    build:
+      context: ./GradeServices
+      dockerfile: Dockerfile
+    environment:
+      MONGODB_URI: "mongodb+srv://tung:1234@cluster0.6o97ncy.mongodb.net/studentManagement?retryWrites=true&w=majority&appName=Cluster0"
+      IP: grade-service
+      PORT: "3004"
+    depends_on:
+      - mongodb
+    ports:
+      - "3004:3004"
+
+  feedback-service:
+    build:
+      context: ./FeedbackService
+      dockerfile: Dockerfile
+    environment:
+      MONGODB_URI: "mongodb+srv://tung:1234@cluster0.6o97ncy.mongodb.net/studentManagement?retryWrites=true&w=majority&appName=Cluster0"
+      IP: feedback-service
+      PORT: "3005"
+      DRIVER_URL: "http://driver-service:3002"
+    depends_on:
+      - mongodb
+    ports:
+      - "3005:3005"
+
+  gateway:
+    build:
+      context: ./GatewayService
+      dockerfile: Dockerfile
+    restart: on-failure
+    environment:
+      IP: gateway
+      PORT: "3000"
+      JWT_ACCESS_KEY: "tung1234"
+      COURSE_URL: "http://course-service:3001"
+      USER_URL: "http://user-service:3002"
+      ENROLLMENT_URL: "http://enrollment-service:3003"
+      GRADE_URL=: "http://grade-service:3004"
+      FEEDBACK_URL: "http://feedback-service:3005"
+
+    ports:
+      - "3000:3000"
+    depends_on:
+      - course-service
+      - user-service
+      - enrollment-service
+      - grade-service
+      - feedback-service
