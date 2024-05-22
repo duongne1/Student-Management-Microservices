@@ -3,15 +3,9 @@ require("dotenv").config();
 
 const middleware = {
   verifyToken: (req, res, next) => {
-    let token = req.cookies["accessToken"];
-    if (token === undefined) {
-      token = req.headers["authorization"];
-      console.log(token);
-      token = token.split(" ")[1];
-    }
-    console.log(token);
+    const token = req.cookies["accessToken"];
     if (!token) {
-      return res.status(401).json({ error: "Bạn cần Login." });
+      return res.status(401).json({ error: "Bạn cần Login" });
     }
     try {
       jwt.verify(token, process.env.JWT_ACCESS_KEY, (err, user) => {
