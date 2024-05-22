@@ -7,19 +7,19 @@ services:
     ports:
       - "27017:27017"
 
-  # course-service:
-  #   build:
-  #     context: ./CourseService
-  #     dockerfile: Dockerfile
-  #   environment:
-  #     MONGODB_URI: "mongodb+srv://tung:1234@cluster0.6o97ncy.mongodb.net/studentManagement?retryWrites=true&w=majority&appName=Cluster0"
-  #     IP: course-service
-  #     PORT: "3001"
-  #     REDIS_HOST: "127.0.0.1"
-  #   depends_on:
-  #     - mongodb
-  #   ports:
-  #     - "3001:3001"
+  course-service:
+    build:
+      context: ./CourseService
+      dockerfile: Dockerfile
+    environment:
+      MONGODB_URI: "mongodb+srv://tung:1234@cluster0.6o97ncy.mongodb.net/studentManagement?retryWrites=true&w=majority&appName=Cluster0"
+      IP: course-service
+      PORT: "3001"
+      REDIS_HOST: "127.0.0.1"
+    depends_on:
+      - mongodb
+    ports:
+      - "3001:3001"
 
   user-service:
     build:
