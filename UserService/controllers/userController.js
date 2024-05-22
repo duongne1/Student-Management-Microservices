@@ -20,9 +20,6 @@ const login = async (req, res) => {
       const accessToken = jwt.sign(
         {
           id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
           role: user.role,
         },
         process.env.JWT_ACCESS_KEY,
@@ -40,7 +37,8 @@ const login = async (req, res) => {
 };
 
 const signup = async (req, res) => {
-  const { name, username, password, dateofbirth, email, gender } = req.body;
+  const { name, username, password, dateofbirth, email, gender, role } =
+    req.body;
   try {
     // Kiểm tra xem username đã tồn tại trong cơ sở dữ liệu chưa
     const user = await User.findOne({ username: username });
@@ -58,6 +56,7 @@ const signup = async (req, res) => {
       dateofbirth: dateofbirth,
       email: email,
       gender: gender,
+      role: role,
     });
     // Lưu tài khoản mới vào cơ sở dữ liệu
     await newUser.save();
