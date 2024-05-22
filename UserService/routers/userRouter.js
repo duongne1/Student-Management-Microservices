@@ -12,13 +12,13 @@ router.post("/signup", userController.signup);
 // http://localhost:3002/api/v1/users/getAllUser
 router.get(
   "/getAllUser",
-  middlewareController.verifyToken,
+  middlewareController.verifyTokenAuth,
   userController.getAllUser
 );
 // http://localhost:3002/api/v1/users/getUserById
 router.get(
   "/getUserById:id",
-  middlewareController.verifyToken,
+  middlewareController.verifyTokenAuth,
   userController.getUserById
 );
 module.exports = router;
