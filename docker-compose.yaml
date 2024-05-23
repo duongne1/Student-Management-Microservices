@@ -6,6 +6,11 @@ services:
     container_name: mongodb
     ports:
       - "27017:27017"
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - '6379:6379'
 
   course-service:
     build:
@@ -15,7 +20,7 @@ services:
       MONGODB_URI: "mongodb+srv://tung:1234@cluster0.6o97ncy.mongodb.net/studentManagement?retryWrites=true&w=majority&appName=Cluster0"
       IP: course-service
       PORT: "3001"
-      REDIS_HOST: "127.0.0.1"
+      REDIS_HOST: redis
     depends_on:
       - mongodb
     ports:
@@ -68,7 +73,6 @@ services:
       MONGODB_URI: "mongodb+srv://tung:1234@cluster0.6o97ncy.mongodb.net/studentManagement?retryWrites=true&w=majority&appName=Cluster0"
       IP: feedback-service
       PORT: "3005"
-      DRIVER_URL: "http://driver-service:3002"
     depends_on:
       - mongodb
     ports:
@@ -86,7 +90,7 @@ services:
       COURSE_URL: "http://course-service:3001"
       USER_URL: "http://user-service:3002"
       ENROLLMENT_URL: "http://enrollment-service:3003"
-      GRADE_URL=: "http://grade-service:3004"
+      GRADE_URL: "http://grade-service:3004"
       FEEDBACK_URL: "http://feedback-service:3005"
 
     ports:
