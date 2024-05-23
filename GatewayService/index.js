@@ -16,17 +16,17 @@ app.use(cookieParser());
 const rateLimit = require("express-rate-limit");
 
 const limiter = rateLimit({
-  windowMs: 50 * 1000, // 5 giây
-  max: 2,
-  message: "Thử lại sau 10 giây",
+  windowMs: 30 * 1000, // 5 giây
+  max: 1,
+  message: "Thử lại sau 30 giây",
   handler: (req, res) => {
     res.status(429).json({
-      message: "Thử lại sau 10 giây",
+      message: "Thử lại sau 30 giây",
     });
   },
 });
 
-app.use("/api/v1/users", limiter);
+// app.use("/api/v1/users", limiter);
 
 USER_URL = "http://localhost:3002";
 COURSE_URL = "http://localhost:3001";
@@ -68,12 +68,17 @@ app.use(
 );
 
 //user service
-
+//client sẽ gọi đến uservice qua gateway
+app.use(
+  "/service6",
+  limiter,
+  createProxyMiddleware({ target: process.env.USER_URL, changeOrigin: true })
+);
 app.use(
   "/",
   createProxyMiddleware({ target: process.env.USER_URL, changeOrigin: true })
 );
-app.use("/", limiter);
+
 app.listen(port, () => {
   console.log("API GateWay ");
   console.log("Server is running on PORT: " + port);
