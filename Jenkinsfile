@@ -17,7 +17,6 @@ pipeline {
                 stage('Build course Service') {
                     steps {
                         script {
-                            // This step should not normally be used in your script. Consult the inline help for details.
                             withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
                                 docker.build("$course:$IMAGE_TAG", './CourseService').push()
                             }
