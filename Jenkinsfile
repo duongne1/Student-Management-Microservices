@@ -19,7 +19,7 @@ pipeline {
                         script {
                             // This step should not normally be used in your script. Consult the inline help for details.
                             withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                                docker.build("$course:$IMAGE_TAG", './CourseServices').push()
+                                docker.build("$course:$IMAGE_TAG", './CourseService').push()
                             }
                         }
                     }
@@ -37,7 +37,7 @@ pipeline {
                     steps {
                         script {
                           withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                                docker.build("$feedback:$IMAGE_TAG", './feedbackServices').push()
+                                docker.build("$feedback:$IMAGE_TAG", './feedbackService').push()
                             }
                         }
                     }
@@ -64,7 +64,7 @@ pipeline {
                     steps {
                         script {
                           withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                                docker.build("$GATEWAY_SERVICE_IMAGE_NAME:$IMAGE_TAG", './GateWayServices').push()
+                                docker.build("$GATEWAY_SERVICE_IMAGE_NAME:$IMAGE_TAG", './GateWayService').push()
                             }
                         }
                     }
