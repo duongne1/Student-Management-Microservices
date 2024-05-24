@@ -37,7 +37,7 @@ pipeline {
                     steps {
                         script {
                           withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                                docker.build("$feedback:$IMAGE_TAG", './feedbackService').push()
+                                docker.build("$feedback:$IMAGE_TAG", './FeedbackService').push()
                             }
                         }
                     }
