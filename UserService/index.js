@@ -24,9 +24,14 @@ app.use(cookieParser());
 
 // Áp dụng rate limiter
 const limiter = rateLimit({
-  windowMs: 30 * 1000, // 10 giây
-  max: 5, // Giới hạn mỗi IP chỉ được thực hiện 3 yêu cầu mỗi 10 giây
+  windowMs: 30 * 1000,
+  max: 5,
   message: "Thử lại sau 30 giây",
+  handler: (req, res) => {
+    res.status(429).json({
+      message: "Thử lại sau 30 giây",
+    });
+  },
 });
 app.use(limiter);
 
