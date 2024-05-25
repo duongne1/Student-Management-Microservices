@@ -6,7 +6,7 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 const axios = require("axios");
 const port = process.env.PORT;
 const middleware = require("./middleware/middlewareController");
-
+const breaker = require("./circuitBreaker/circuitBreaker");
 app.use(cookieParser());
 
 // Sử dụng createProxyMiddleware với retryMiddleware cho các dịch vụ
@@ -28,11 +28,7 @@ const limiter = rateLimit({
 
 // app.use("/api/v1/users", limiter);
 
-USER_URL = "http://localhost:3002";
-COURSE_URL = "http://localhost:3001";
-ENROLLMENT_URL = "http://localhost:3003";
-GRADE_URL = "http://localhost:3004";
-FEEDBACK_URL = "http://localhost:3005";
+
 
 //courses service
 app.use(
@@ -42,18 +38,24 @@ app.use(
 );
 
 //enrollment service
-app.use(
-  "/service3",
-  middleware.verifyToken,
-  createProxyMiddleware({
-    target: process.env.ENROLLMENT_URL,
-    changeOrigin: true,
-  })
-);
+app.use("/service3", middleware.verifyToken, (req, res) => {
+  breaker
+    .fire(req, res)
+    .then(() => {
+      if (!res.headersSent) {
+        res.end();
+      }
+    })
+    .catch((err) => {
+      // console.error("Error:", err);
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Service đạng tạm đóng!" });
+      }
+    });
+});
 // //grade service
 app.use(
   "/service4",
-  middleware.verifyToken,
   createProxyMiddleware({ target: process.env.GRADE_URL, changeOrigin: true })
 );
 
@@ -78,6 +80,22 @@ app.use(
   "/",
   createProxyMiddleware({ target: process.env.USER_URL, changeOrigin: true })
 );
+
+app.use("/", middleware.verifyToken, (req, res) => {
+  breaker
+    .fire(req, res)
+    .then(() => {
+      if (!res.headersSent) {
+        res.end();
+      }
+    })
+    .catch((err) => {
+      console.error("Error:", err);
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Service đạng tạm đóng trong 10s!" });
+      }
+    });
+});
 
 app.listen(port, () => {
   console.log("API GateWay ");
