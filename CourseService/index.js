@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
+const retry = require("retry"); // Import thư viện retry
 require("dotenv").config();
 const cors = require("cors");
 const app = express();
@@ -22,58 +23,50 @@ app.use(cookieParser());
 
 // Database connection
 const dbURI = process.env.MONGODB_URI;
-mongoose
-  .connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    console.log("Connected to MongoDB");
-  })
-  .catch((error) => {
-    console.error("Connection failed:", error);
+
+const connectWithRetry = async () => {
+  const operation = retry.operation({
+    retries: 5, // Số lần thử lại
+    factor: 2, // Hệ số tăng thời gian chờ giữa các lần thử lại
+    minTimeout: 1000, // Thời gian chờ tối thiểu trước khi thử lại lần đầu tiên
+    maxTimeout: 5000, // Thời gian chờ tối đa giữa các lần thử lại
   });
 
-// Routes
-app.use("/api/v1/courses", courseRoute);
-
-app.use(function (req, res) {
-  res.status(404).send("Not found");
-});
-
-// Function to start server with retry logic
-const startServerWithRetry = (retryCount = 5, retryDelay = 3000) => {
-  const tryStartServer = (attemptsLeft) => {
-    if (attemptsLeft <= 0) {
-      console.error("Failed to start server after multiple attempts");
-      process.exit(1); // Exit the process if all retries fail
-    }
-
-    server
-      .listen(port, ip, () => {
-        console.log(`Server is running on IP: ${ip}`);
-        console.log(`Server is running on PORT: ${port}`);
-        console.log(`Server is running on DB: ${mongodb}`);
-      })
-      .on("error", (err) => {
-        if (err.code === "EADDRINUSE") {
-          console.error(
-            `Failed to start server on port ${port}: ${err.message}`
-          );
-          console.log(
-            `Retrying to start server in ${retryDelay / 1000} seconds... (${
-              attemptsLeft - 1
-            } attempts left)`
-          );
-          setTimeout(() => {
-            tryStartServer(attemptsLeft - 1);
-          }, retryDelay);
-        } else {
-          console.error(`Error: ${err.message}`);
-          process.exit(1); // Exit immediately for non EADDRINUSE errors
+  return new Promise((resolve, reject) => {
+    operation.attempt(async (currentAttempt) => {
+      try {
+        await mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
+        console.log("Connected to MongoDB");
+        resolve();
+      } catch (error) {
+        console.log(`MongoDB connection attempt ${currentAttempt} failed:`, error.message);
+        if (operation.retry(error)) {
+          console.log(`Retrying to connect to MongoDB in ${operation._timeouts.current} milliseconds...`);
+          return;
         }
-      });
-  };
-
-  tryStartServer(retryCount);
+        reject(operation.mainError());
+      }
+    });
+  });
 };
 
-// Start the server with retry logic
-startServerWithRetry();
+connectWithRetry().then(() => {
+  // Routes
+  app.use("/api/v1/courses", courseRoute);
+
+  app.use(function (req, res) {
+    res.status(404).send("Not found");
+  });
+
+  // Start the server
+  server.listen(port, ip, () => {
+    console.log(`Server is running on IP: ${ip}`);
+    console.log(`Server is running on PORT: ${port}`);
+    console.log(`Server is running on DB: ${mongodb}`);
+  }).on("error", (err) => {
+    process.exit(1);
+  });
+}).catch(err => {
+  console.error("Failed to connect to MongoDB after multiple attempts");
+  process.exit(1);
+});

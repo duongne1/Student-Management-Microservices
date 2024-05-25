@@ -56,7 +56,6 @@ app.use("/service3", middleware.verifyToken, (req, res) => {
 // //grade service
 app.use(
   "/service4",
-  middleware.verifyToken,
   createProxyMiddleware({ target: process.env.GRADE_URL, changeOrigin: true })
 );
 
