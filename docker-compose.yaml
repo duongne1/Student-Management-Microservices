@@ -13,6 +13,8 @@
         - '6379:6379'
 
     course-service:
+      container_name: course-service
+      image: bntung2002/management-microservices:course-service
       build:
         context: ./CourseService
         dockerfile: Dockerfile
@@ -27,6 +29,8 @@
         - "3001:3001"
 
     user-service:
+      container_name: user-service
+      image: bntung2002/management-microservices:user-service
       build:
         context: ./UserService
         dockerfile: Dockerfile
@@ -53,6 +57,8 @@
         - "3003:3003"
 
     grade-service:
+      container_name: grade-service
+      image: bntung2002/management-microservices:grade-service
       build:
         context: ./GradeServices
         dockerfile: Dockerfile
@@ -66,6 +72,8 @@
         - "3004:3004"
 
     feedback-service:
+      container_name: feedback-service
+      image: bntung2002/management-microservices:feedback-service
       build:
         context: ./FeedbackService
         dockerfile: Dockerfile
@@ -78,13 +86,15 @@
       ports:
         - "3005:3005"
 
-    gateway:
+    gateway-service:
+      container_name: gateway
+      image: bntung2002/management-microservices:gateway-service
       build:
         context: ./GatewayService
         dockerfile: Dockerfile
       restart: on-failure
       environment:
-        IP: gateway
+        IP: gateway-service
         PORT: "3000"
         JWT_ACCESS_KEY: "tung1234"
         COURSE_URL: "http://course-service:3001"
