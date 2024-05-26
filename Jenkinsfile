@@ -46,7 +46,7 @@ pipeline {
                     steps {
                         script {
                            withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                                docker.build("${NAMESPACE}/${NAMESPACE}:$grade", './GradeServices').push()
+                                docker.build("${NAMESPACE}:$grade", './GradeServices').push()
                             }
                         }
                     }
