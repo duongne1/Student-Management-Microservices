@@ -16,7 +16,7 @@ app.use(cookieParser());
 const rateLimit = require("express-rate-limit");
 
 const limiter = rateLimit({
-  windowMs: 30 * 1000, // 5 giây
+  windowMs: 30 * 1000,
   max: 1,
   message: "Thử lại sau 30 giây",
   handler: (req, res) => {
@@ -27,8 +27,6 @@ const limiter = rateLimit({
 });
 
 // app.use("/api/v1/users", limiter);
-
-
 
 //courses service
 app.use(
@@ -47,7 +45,6 @@ app.use("/service3", middleware.verifyToken, (req, res) => {
       }
     })
     .catch((err) => {
-      // console.error("Error:", err);
       if (!res.headersSent) {
         res.status(500).json({ message: "Service đạng tạm đóng!" });
       }

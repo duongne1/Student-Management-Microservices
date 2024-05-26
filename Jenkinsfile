@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+        NAMESPACE = 'duongne1/kttkpm-service'
         course = 'course-service'
         erollment = 'enrollment-service'
         feedback = 'feedback-service'
@@ -18,7 +19,7 @@ pipeline {
                     steps {
                         script {
                             withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                                docker.build("$course:$IMAGE_TAG", './CourseService').push()
+                                docker.build("${NAMESPACE}/$course:$IMAGE_TAG", './CourseService').push()
                             }
                         }
                     }
@@ -27,7 +28,7 @@ pipeline {
                     steps {
                         script {
                            withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                                docker.build("$erollment:$IMAGE_TAG", './EnrollmentServices').push()
+                                docker.build("${NAMESPACE}/$erollment:$IMAGE_TAG", './EnrollmentServices').push()
                             }
                         }
                     }
@@ -36,7 +37,7 @@ pipeline {
                     steps {
                         script {
                           withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                                docker.build("$feedback:$IMAGE_TAG", './FeedbackService').push()
+                                docker.build("${NAMESPACE}/$feedback:$IMAGE_TAG", './FeedbackService').push()
                             }
                         }
                     }
@@ -45,7 +46,7 @@ pipeline {
                     steps {
                         script {
                            withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                                docker.build("$grade:$IMAGE_TAG", './GradeServices').push()
+                                docker.build("${NAMESPACE}/${NAMESPACE}/$grade:$IMAGE_TAG", './GradeServices').push()
                             }
                         }
                     }
@@ -54,7 +55,7 @@ pipeline {
                     steps {
                         script {
                           withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                                docker.build("$user:$IMAGE_TAG", './UserService').push()
+                                docker.build("${NAMESPACE}/$user:$IMAGE_TAG", './UserService').push()
                             }
                         }
                     }
@@ -63,7 +64,7 @@ pipeline {
                     steps {
                         script {
                           withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                                docker.build("$GATEWAY_SERVICE_IMAGE_NAME:$IMAGE_TAG", './GateWayService').push()
+                                docker.build("${NAMESPACE}/$GATEWAY_SERVICE_IMAGE_NAME:$IMAGE_TAG", './GateWayService').push()
                             }
                         }
                     }
