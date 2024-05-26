@@ -19,7 +19,7 @@ pipeline {
                     steps {
                         script {
                             withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                                docker.build("${NAMESPACE}/$course:$IMAGE_TAG", './CourseService').push()
+                                docker.build("${NAMESPACE}:$course", './CourseService').push()
                             }
                         }
                     }
@@ -28,7 +28,7 @@ pipeline {
                     steps {
                         script {
                            withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                                docker.build("${NAMESPACE}/$erollment:$IMAGE_TAG", './EnrollmentServices').push()
+                                docker.build("${NAMESPACE}:$erollment", './EnrollmentServices').push()
                             }
                         }
                     }
@@ -37,7 +37,7 @@ pipeline {
                     steps {
                         script {
                           withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                                docker.build("${NAMESPACE}/$feedback:$IMAGE_TAG", './FeedbackService').push()
+                                docker.build("${NAMESPACE}:$feedback", './FeedbackService').push()
                             }
                         }
                     }
@@ -46,7 +46,7 @@ pipeline {
                     steps {
                         script {
                            withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                                docker.build("${NAMESPACE}/${NAMESPACE}/$grade:$IMAGE_TAG", './GradeServices').push()
+                                docker.build("${NAMESPACE}/${NAMESPACE}:$grade", './GradeServices').push()
                             }
                         }
                     }
@@ -55,7 +55,7 @@ pipeline {
                     steps {
                         script {
                           withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                                docker.build("${NAMESPACE}/$user:$IMAGE_TAG", './UserService').push()
+                                docker.build("${NAMESPACE}:$user", './UserService').push()
                             }
                         }
                     }
@@ -64,7 +64,7 @@ pipeline {
                     steps {
                         script {
                           withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                                docker.build("${NAMESPACE}/$GATEWAY_SERVICE_IMAGE_NAME:$IMAGE_TAG", './GateWayService').push()
+                                docker.build("${NAMESPACE}:$GATEWAY_SERVICE_IMAGE_NAME", './GateWayService').push()
                             }
                         }
                     }
